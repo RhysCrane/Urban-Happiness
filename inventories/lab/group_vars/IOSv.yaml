@@ -1,0 +1,13 @@
+---
+test:
+  hosts:
+  vars:
+    - ansible_become: yes
+    - ansible_become_method: enable
+    #- ansible_become_pass: 
+    - ansible_network_os: ios
+    - ansible_user: rhys
+    #- ansible_ssh_pass: 
+    - ansible_connection: network_cli 
+    - compliant_ios_ver: 16.08.01a
+    - ny_ios_filename: txt.txt

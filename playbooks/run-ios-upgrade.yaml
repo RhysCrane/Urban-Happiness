@@ -1,0 +1,40 @@
+---
+#run the upgrade after the prep has been completed.
+#https://gdykeman.github.io/2018/06/26/ios-upgrades/
+
+- name: Run the ios upgrade after the prep has been completed
+  hosts: test
+  connection: network_cli
+  gather_facts: no
+
+  #vars:
+    #compliant_ios_ver: 16.08.01a
+    #ny_ios_filename: txt.txt
+
+  tasks:
+    - name: gather facts from node
+      ios_facts:
+
+    - name: run a reboot on the condition that the new image is set to boot
+      block:
+      - name: Run the upgrade by restarting the node
+
+      – name: Reload node
+        ios_command:
+          commands: reload
+
+      when: ansible_net_image == {{ ny_ios_filename }}
+
+    – name: VERIFYING CONNECTIVITY
+      wait_for:
+         port: 22
+         timeout: 300
+
+  – ios_command:
+        commands: ping 8.8.4.4
+        provider: “{{cli}}”
+        wait_for:
+        – result[0] contains “!!!”
+
+    register: result
+    failed_when: “not ‘!!!’ in result.stdout[0]”

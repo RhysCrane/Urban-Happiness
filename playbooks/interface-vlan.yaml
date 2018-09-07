@@ -1,0 +1,14 @@
+---
+#get interface and vlan info
+- name: GET DEVICE INFO
+  hosts: testhosts
+  connection: network_cli
+  gather_facts: no
+
+  tasks:
+    - name: GATHER ROUTER INT INFO
+      ios_facts:
+        gather_subset:
+          - interface
+
+    - name: list int in vlan

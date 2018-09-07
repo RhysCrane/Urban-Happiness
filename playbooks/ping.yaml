@@ -1,0 +1,9 @@
+---
+#playbook to check connectivity with hosts using ping
+
+- name: ping hosts
+  hosts: test
+
+  tasks:
+   - name: ping hosts
+     ping:
