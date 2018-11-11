@@ -1,0 +1,44 @@
+---
+- name: Standardise logging host on cisco ios
+  hosts: all
+  connection: network_cli
+  gather_facts: no
+
+  vars:
+    standard_logging_hosts:
+      - logging host 2.2.2.2
+      - logging host 2.2.3.2
+
+  vars_prompt:
+    - name: "ansible_user"
+      prompt: "Enter username"
+      private: yes
+
+    - name: "ansible_ssh_pass"
+      prompt: "Enter password"
+
+  tasks:
+
+    - name: Configure standard logging hosts
+      ios_config:
+        lines: "{{ standard_logging_hosts }}"
+
+    - name: Get current configured logging hosts
+      ios_command:
+        commands: "show run | include logging host"
+      register: current_logging_hosts
+
+    - set_fact:
+        logging_host_list: "{{ current_logging_hosts.stdout_lines[0] }}"
+
+    - set_fact:
+        superfluous_logging_hosts: "{{ logging_host_list | difference(standard_logging_hosts) | list }}"
+
+    - debug:
+        msg: "Logging is standard"
+      when: superfluous_logging_hosts == []
+
+    - name: Remove any superflous logging hosts
+      ios_config:
+        lines: "no {{ item }}"
+      with_items: "{{ superfluous_logging_hosts }}"
